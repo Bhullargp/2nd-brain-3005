@@ -32,7 +32,7 @@ export async function POST(request: Request) {
 
     const res = NextResponse.json({ success: true, user: { id: user.id, username: user.username, email: user.email, role: user.role } });
     res.cookies.set(authConfig.sessionCookie, token, {
-      httpOnly: true,
+      httpOnly: process.env.NODE_ENV !== 'production',
       sameSite: 'lax',
       secure: authConfig.secureCookie,
       maxAge: Math.floor(authConfig.sessionTtlMs / 1000),

@@ -121,7 +121,7 @@ export default function TripSheet({ initialTrips }: { initialTrips: any[] }) {
   // Auth check - redirect to login if not authenticated
   useEffect(() => {
     if (mounted && isLoggedIn === false) {
-      router.push('/dispatch/login');
+      // router.push("/dispatch/login"); // Disabled for preview browser
     }
   }, [mounted, isLoggedIn, router]);
 

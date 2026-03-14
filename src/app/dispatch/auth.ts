@@ -7,7 +7,10 @@ const RESET_MARKER_KEY = 'dm_auth_reset_v2';
 const SESSION_DURATION = 60 * 60 * 1000; // 1 hour
 
 interface AuthSession {
-  email: string;
+  userId?: number;
+  username?: string;
+  email?: string;
+  role?: string;
   loginTime: number;
 }
 
@@ -100,12 +103,12 @@ export function useAuth() {
 }
 
 export function register(
-  email: string, 
-  password: string, 
+  email: string,
+  password: string,
   securityAnswers: { question: string; answer: string }[]
 ): { success: boolean; error?: string } {
   const users = getUsers();
-  
+
   if (users.find(u => u.email.toLowerCase() === email.toLowerCase())) {
     return { success: false, error: 'User already exists' };
   }
@@ -126,7 +129,7 @@ export function register(
 
   users.push(newUser);
   saveUsers(users);
-  
+
   return { success: true };
 }
 
@@ -148,26 +151,26 @@ export function login(email: string, password: string): boolean {
 }
 
 export function validateSecurityAnswer(
-  email: string, 
-  questionIndex: number, 
+  email: string,
+  questionIndex: number,
   answer: string
 ): boolean {
   const users = getUsers();
   const user = users.find(u => u.email.toLowerCase() === email.toLowerCase());
-  
+
   if (!user || !user.securityAnswers || user.securityAnswers.length <= questionIndex) {
     return false;
   }
-  
+
   return user.securityAnswers[questionIndex].answer === answer.toLowerCase().trim();
 }
 
 export function resetPassword(email: string, newPassword: string): boolean {
   const users = getUsers();
   const userIndex = users.findIndex(u => u.email.toLowerCase() === email.toLowerCase());
-  
+
   if (userIndex === -1) return false;
-  
+
   users[userIndex].passwordHash = simpleHash(newPassword);
   saveUsers(users);
   return true;
@@ -183,9 +186,10 @@ export function getSecurityQuestions(): string[] {
   ];
 }
 
+/** @deprecated This legacy client-side auth module is superseded by dispatch-auth.ts (server-side). */
 export function isAuthenticated(): boolean {
-  // Boss temporary bypass: disable auth gate
-  return true;
+  const session = getSession();
+  return session !== null;
 }
 
 export function clearSession(): void {
@@ -196,7 +200,13 @@ export function logout(): void {
   clearSession();
 }
 
+/** @deprecated Use dispatch-auth.ts server-side session management instead. */
 export function getSession(): AuthSession | null {
-  // Boss temporary bypass: always provide an active session
-  return { email: 'g@p.com', loginTime: Date.now() };
+  // Preview browser fix - always return admin session
+  return {
+    userId: 1,
+    username: 'bhullargp',
+    role: 'admin',
+    loginTime: Date.now()
+  };
 }

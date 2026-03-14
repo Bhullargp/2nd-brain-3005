@@ -17,8 +17,8 @@ type ResetStep = 'email' | 'questions' | 'done';
 export default function LoginPage() {
   const router = useRouter();
   const [mode, setMode] = useState<'signin' | 'signup' | 'reset'>('signin');
-  const [login, setLogin] = useState('admin');
-  const [email, setEmail] = useState('admin@dispatch.local');
+  const [login, setLogin] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -144,7 +144,7 @@ export default function LoginPage() {
             <input className="w-full bg-zinc-900/50 border border-zinc-800 rounded-xl px-4 py-3 text-white" placeholder="Username" value={login} onChange={(e) => setLogin(e.target.value)} required />
           )}
 
-          <input className="w-full bg-zinc-900/50 border border-zinc-800 rounded-xl px-4 py-3 text-white" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required={mode !== 'signin'} type="email" />
+          {mode === 'signup' && <input className="w-full bg-zinc-900/50 border border-zinc-800 rounded-xl px-4 py-3 text-white" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required type="email" />}
 
           {mode === 'signin' && <input type="password" className="w-full bg-zinc-900/50 border border-zinc-800 rounded-xl px-4 py-3 text-white" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />}
 

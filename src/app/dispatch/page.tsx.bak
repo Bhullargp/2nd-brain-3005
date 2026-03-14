@@ -11,8 +11,8 @@ const dbPath = path.resolve(process.cwd(), 'dispatch.db');
 export default async function TripSheetPage({ searchParams }: { searchParams?: Promise<{ adminMode?: string }> }) {
   ensureDispatchAuthSchemaAndSeed();
   const sp = searchParams ? await searchParams : undefined;
-  // Auth disabled for preview browser - always use admin
-  const access = { session: { userId: 1, username: 'bhullargp', role: 'admin' }, isAdmin: true, adminMode: null };
+  const access = await getServerAccess(sp?.adminMode);
+  if (!access) redirect('/dispatch/login');
 
   const db = new Database(dbPath);
   const scope = userScopedWhere(access, 't.user_id');

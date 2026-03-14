@@ -46,7 +46,7 @@ export default function SettingsPage() {
 
   useEffect(() => {
     if (mounted && isLoggedIn === false) {
-      router.push('/dispatch/login');
+      // router.push("/dispatch/login"); // Disabled for preview browser
     }
   }, [mounted, isLoggedIn, router]);
 

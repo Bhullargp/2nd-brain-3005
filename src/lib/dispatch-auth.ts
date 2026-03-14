@@ -127,12 +127,97 @@ export function ensureDispatchAuthSchemaAndSeed() {
       security_a2_hash TEXT NOT NULL,
       security_q3 TEXT NOT NULL,
       security_a3_hash TEXT NOT NULL,
-      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS trips (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      trip_number TEXT NOT NULL,
+      start_date TEXT,
+      end_date TEXT,
+      total_miles REAL DEFAULT 0,
+      route TEXT DEFAULT '',
+      status TEXT DEFAULT 'Not Started',
+      notes TEXT DEFAULT '',
+      pdf_path TEXT,
+      raw_data TEXT,
+      start_odometer REAL,
+      end_odometer REAL,
+      trailer TEXT,
+      trailer_2 TEXT,
+      trailer_3 TEXT,
+      trailer_4 TEXT,
+      trailer_5 TEXT,
+      trailer_number TEXT,
+      user_id INTEGER REFERENCES users(id),
+      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS stops (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      trip_number TEXT NOT NULL,
+      stop_type TEXT,
+      location TEXT,
+      date TEXT,
+      miles_from_last REAL DEFAULT 0,
+      user_id INTEGER REFERENCES users(id)
+    );
+
+    CREATE TABLE IF NOT EXISTS fuel (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      trip_number TEXT,
+      date TEXT,
+      location TEXT,
+      quantity REAL,
+      unit TEXT DEFAULT 'gallons',
+      amount_usd REAL,
+      odometer REAL,
+      user_id INTEGER REFERENCES users(id)
+    );
+
+    CREATE TABLE IF NOT EXISTS extra_pay (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      trip_number TEXT NOT NULL,
+      type TEXT NOT NULL,
+      amount REAL DEFAULT 0,
+      quantity INTEGER DEFAULT 1,
+      date TEXT,
+      user_id INTEGER REFERENCES users(id)
+    );
+
+    CREATE TABLE IF NOT EXISTS status_history (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      trip_number TEXT NOT NULL,
+      status TEXT NOT NULL,
+      changed_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      user_id INTEGER REFERENCES users(id)
+    );
+
+    CREATE TABLE IF NOT EXISTS trailer_inventory (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      trailer_number TEXT NOT NULL,
+      last_seen TEXT,
+      user_id INTEGER REFERENCES users(id)
+    );
+
+    CREATE TABLE IF NOT EXISTS pay_rates (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      type TEXT NOT NULL,
+      amount REAL NOT NULL,
+      user_id INTEGER REFERENCES users(id)
+    );
+
+    CREATE TABLE IF NOT EXISTS mileage_rates (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      country TEXT NOT NULL,
+      threshold INTEGER DEFAULT 0,
+      rate REAL NOT NULL,
+      user_id INTEGER REFERENCES users(id)
     );
   `);
 
-  const adminEmail = 'admin@dispatch.local';
-  const adminUsername = 'admin';
+  const adminEmail = 'bhullargp@yahoo.com';
+  const adminUsername = 'bhullargp';
   const adminPassword = 'karandeep@007';
   const defaultSecurity = [
     { question: 'What was the name of your first pet?', answer: 'dispatch' },
